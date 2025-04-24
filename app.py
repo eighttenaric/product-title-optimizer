@@ -9,6 +9,8 @@ import re
 import json
 import math
 import gspread
+from google.oauth2 import service_account
+from google.auth.transport.requests import AuthorizedSession
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 
@@ -20,7 +22,6 @@ except ModuleNotFoundError:
 
 # Environment configuration
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-SERVICE_ACCOUNT_FILE = os.getenv("SERVICE_ACCOUNT_FILE", "service_account.json")
 TEMPLATE_SHEET_ID = os.getenv(
     "TEMPLATE_SHEET_ID",
     "1WOozcrnam_fdNsqKhq8E517J5nI076MsmPIYiGSs2ro"
@@ -41,58 +42,57 @@ def init_openai():
 gs_client = None
 drive_service = None
 
-def init_gs():
-    """Authorize gspread and Drive using the service account JSON file."""
-    global gs_client, drive_service
-    if gs_client is not None:
-        return
-    try:
-        creds_dict = json.load(open(SERVICE_ACCOUNT_FILE))
-    except Exception:
-        st.error(f"Could not read service account file at {SERVICE_ACCOUNT_FILE}")
-        st.stop()
-    scope = [
-        'https://spreadsheets.google.com/feeds',
-        'https://www.googleapis.com/auth/drive'
-    ]
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
-    gs_client = gspread.authorize(creds)
-    if build:
-        drive_service = build('drive', 'v3', credentials=creds)
+@st.cache_resource
+def get_clients():
+    """Return (OpenAI client, GMC service, gspread client)."""
+    # 1) OpenAI via Streamlit secrets
+    openai_key = st.secrets["OPENAI_API_KEY"]
+    client = OpenAI(api_key=openai_key)
 
-# Utility: create a fresh copy of the template spreadsheet
+    # 2) Service account JSON from secrets.toml under [gmc]
+    sa_info = st.secrets["gmc"]
+
+    # 3) Build Google creds with all needed scopes
+    creds = service_account.Credentials.from_service_account_info(
+        sa_info,
+        scopes=[
+            "https://www.googleapis.com/auth/content",      # Merchant Center
+            "https://www.googleapis.com/auth/spreadsheets",  # Sheets API
+            "https://www.googleapis.com/auth/drive",         # Drive (for copying)
+        ]
+    )
+
+    # 4a) Merchant Center API
+    mc_service = build("content", "v2.1", credentials=creds)
+
+    # 4b) gspread client using an authorized session
+    gs_client = gspread.Client(auth=creds, session=AuthorizedSession(creds))
+
+    return client, mc_service, gs_client
+
 
 def create_new_sheet():
-    """Copy the template sheet, make it public/editable, and return the new spreadsheet ID."""
-    init_gs()
-    if not TEMPLATE_SHEET_ID:
-        st.error("Missing TEMPLATE_SHEET_ID in environment.")
-        st.stop()
-    if not build or not drive_service:
-        st.error("google-api-python-client is required to create a sheet. Install with `pip install google-api-python-client`.")
-        st.stop()
+    """Copy the template sheet via Drive API & share it publicly."""
+    _, mc_service, gs_client = get_clients()
 
     now = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
     copy_title = f"Product Optimizer {now}"
 
-    new_file = drive_service.files().copy(
+    new_file = mc_service.files().copy(
         fileId=TEMPLATE_SHEET_ID,
         body={"name": copy_title}
     ).execute()
 
-    # Make the sheet publicly editable
-    drive_service.permissions().create(
+    mc_service.permissions().create(
         fileId=new_file['id'],
-        body={
-            'role': 'writer',
-            'type': 'anyone'
-        },
+        body={'role': 'writer', 'type': 'anyone'},
         fields='id'
     ).execute()
 
     public_url = f"https://docs.google.com/spreadsheets/d/{new_file['id']}"
     st.success(f"✅ Sheet created and shared: [Open Sheet]({public_url})")
-    return new_file.get('id')
+    return new_file['id']
+
 
 # Core OpenAI call with manual retries
 def call_openai_with_retries(prompt: str, max_retries: int = 3, backoff: float = 10.0):
@@ -214,6 +214,7 @@ def process_batches(df: pd.DataFrame, batch_size: int, delay: float, ws=None):
 
 # Main function
 def main():
+    client, mc_service, gs_client = get_clients()
     st.title("🔍 Product Title Optimizer")
     init_openai()
     st.sidebar.header("Configuration")
@@ -239,6 +240,13 @@ def main():
         df, ws = sheet_to_df(sheet_id, ws_name)
         process_batches(df, batch_size, delay, ws)
         st.success("Optimization complete!")
+
+def sheet_to_df(sheet_id: str, ws_name: str):
+    _, _, gs_client = get_clients()
+    ws = gs_client.open_by_key(sheet_id).worksheet(ws_name)
+    df = pd.DataFrame(ws.get_all_records())
+    return df, ws
+
 
 if __name__ == '__main__':
     main()
