@@ -1,0 +1,21 @@
+[gmc]
+# Your Merchant Center ID (as a string)
+merchant_id = "123456789"
+
+# Every key/value from your JSON, without extra commas
+type                        = "service_account"
+project_id                  = "title-optimizer-457718"
+private_key_id              = "2786d77e33e24af1f952ddd0c2e9a0ec2b4905a9"
+private_key                 = "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCVRdplc9aZRBlY\nReF/JPFmPo/WXbuFRy5WvGEXnP3BA1OBbArB3EvCGYK5sXkMRXT6hZSr88/2Edli\n55Byiw9lJaBmsckGkR7poQBkxa2nCPAtgzpLrf1tGfaZ09YycMt62IE2GFVZ2/Tv\nCip0tQnzGJK9tGSVpYdVbabB9JuD4D1hClNt9kUHLmInyzT1Z676tyGpCfqmc1VA\nFUm+QIhv/FY7TbHFw81tA30vSvSQfefBFkq0fu+sxkDQId7rAj1Yiqzc4CtUVPF8\nzKJ3+W97tvUYrDuDsqrTT96mRDYbKEdY0Q7JSzN5+DLjo4b+ZB7iuFmQTBTjXNmR\npBEw56H1AgMBAAECggEARTGjIgIHSPZ7NSL3e0N5ruZzMHA0m3w6a7RY4WRBcDYF\ngGm/tstSRsAii8dLkDemGPbQysBy9uKhPSqQF7iEQ2OkrdXdlHCyvqOGFjBX5aTM\nCJza6ffWELvHRtkeYjVM7T3s71FqRwQhzqiMs5qz6P7MDqnPMlsPl7cDZMbpS8By\nD9EZj9hF0aon2XDkTpSi+PQMRA9mXb6tLGtBmxLWnRtwWlpKnQHXOAIu1tPNl9j0\nPGYY9FfQj9sRycUbeogDhjD6GDTU2XXzpb1/Sd5X6Lr92hqwtPfF/xZ+a5HY0Y7W\nij+ZQ5R6l8iGbOJc6Sdva3yQ7FCD5/hJxUz15uTfJQKBgQDHMAt34trmRcM7AdKF\nzsN5dTZkwZmWlbrYVZEfEiqWo19xj7DwpiGsW+KBJaIaPo7H6wW7ggA+UIbYKwD4\nxIYvt/BRmoppCJ/QWgtH9+u1n1jWxfesE+i3CVdtP6RmSgBMWsEM8t4EIikRuENO\nYrTZQibuC4GMyksvr1a8Shm43wKBgQC/2TYgUvF1K+rojpFl6tyWr9KNdbifWN8G\nVRIKlHP5ZpjAdBLkGdtpxE5bKQK0fICFXDWTXWXm2TaBKyiod/oK/xbaSu5YCe/9\ngEiwWaFTGC60NghTNEqFe3p7cfbvGBrb5YONWfa37pcUpu62fiu7aQj6Hoknci56\nLtQrGNp7qwKBgHPrZgEzKKlyWBfzC42Lsv7wU+N3N+cG5GIaCgbHD7nzAgyYzyR9\nyoMARmVafWhAl9+IyyFAmtupCZCsFjiwRldm+JjFE1/lAPzEKmSLx8U/Ivh65ZRj\nUb+T1ClkLEzLLDlDZ64deU92gegqECGCGDWH5hgK4i4JXJA3voZ9qVKJAoGAbGGp\n0lkJT8ifzQG94nXsaLSrnn8C7gKm/EzTBGcZnav4X8Ezaumwqu/b1GQ2wwATG0Qc\ngEQjbWcJA6/+KC6fc9bocioivFng2rW+WuJH4UmoGObtjRPdhctcRqD7f9d+VPw0\ndYZ9eyuu7lvgP/jHe/i6uZLGqSI4X45VDoPb6kECgYBQY6uq0N/wUNrvAzrabiZ0\nMRAMI+/3l3A2XaHLMP1M7oTGLhsUZ+alUh6nss83u88YKMYbS9ETaE17w5t3fOjL\nXA2jzwVvQ2T0ouNs9dwquqrpfB/IBj900ZtLKBFaugcBMrAo4rAUf0dVioH6IP9G\neRTKiSRfK2hv9zN5vZJV9Q==\n-----END PRIVATE KEY-----\n"
+-----BEGIN PRIVATE KEY-----
+YOUR
+MULTI-LINE
+PRIVATE KEY
+-----END PRIVATE KEY-----
+"""
+client_email                = "titleoptimizer@title-optimizer-457718.iam.gserviceaccount.com"
+client_id                   = "113024560007608556120"
+auth_uri                    = "https://accounts.google.com/o/oauth2/auth"
+token_uri                   = "https://oauth2.googleapis.com/token"
+auth_provider_x509_cert_url = "https://www.googleapis.com/oauth2/v1/certs"
+client_x509_cert_url        = "https://www.googleapis.com/robot/v1/metadata/x509/your-service-account@your-project.iam.gserviceaccount.com"
